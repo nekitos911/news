@@ -1,9 +1,10 @@
 <#import "parts/common.ftl" as c>
-<#import "parts/login.ftl" as l>
 <@c.page>
-<div>
-    <@l.logout />
-    <span><a href="/user">User List</a> </span>
+<div class="form-row">
+    <form method="get" action="/home" class="form-inline">
+        <input type="text" name="filter" value="${filter!}">
+        <button class="btn btn-primary" type="submit">Найти</button>
+    </form>
 </div>
 <div>
     <form method="post">
@@ -13,11 +14,7 @@
         <button type="submit">Добавить</button>
     </form>
 </div>
-<div>Список сообщений</div>
-<form method="get" action="/home">
-    <input type="text" name="filter" value="${filter!}">
-    <button type="submit">Найти</button>
-</form>
+
 <#list messages as message>
     <div>
         <b>${message.id}</b>
