@@ -9,7 +9,7 @@ User editor <br><br>
         </div>
     </#list>
     <input type="hidden" value="${user.id}" name="userId">
-     <@c.token />
+    <input type="hidden" name="_csrf" value="${_csrf.token}" />
     <button type="submit">Save</button>
 </form>
 </@c.page>
