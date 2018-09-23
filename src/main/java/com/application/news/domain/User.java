@@ -9,6 +9,10 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Класс пользователей <br>
+ *     Пользователи хранятся в БД
+ */
 @Entity
 @Table(name = "usr")
 public class User implements UserDetails {
@@ -61,6 +65,11 @@ public class User implements UserDetails {
         this.username = username;
     }
 
+    /**
+     * Пользователь получает права, исходя из имеющихся ролей
+     *
+     * @return роли пользователя
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
@@ -86,6 +95,11 @@ public class User implements UserDetails {
         return roles;
     }
 
+    /**
+     * Проверка на роль администратора
+     *
+     * @return true - если пользователь админ, fasle в ином другом случае
+     */
     public boolean isAdmin() {
         return roles.contains(Role.ADMIN);
     }

@@ -2,6 +2,10 @@ package com.application.news.domain;
 
 import javax.persistence.*;
 
+/**
+ * Класс для работы с сообщениями <br>
+ *     Сообщения хранятся в БД
+ */
 @Entity
 public class Message {
     @Id
@@ -15,6 +19,9 @@ public class Message {
     @JoinColumn(name = "user_id")
     private User author;
 
+    /**
+     * Пустой конструктор для Спринга
+     */
     public Message() {}
 
     public Message(String text, String tag, User author) {
