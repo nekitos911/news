@@ -2,8 +2,10 @@ package com.application.news.controller;
 
 import com.application.news.domain.Message;
 import com.application.news.domain.User;
+import com.application.news.error.CommonException;
 import com.application.news.repos.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,9 +13,19 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 
 @Controller
 public class MainController {
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     private final MessageRepo messageRepo;
 
@@ -47,8 +59,29 @@ public class MainController {
             @AuthenticationPrincipal User user,
             @RequestParam String text,
             @RequestParam String tag,
+            @RequestParam("file") MultipartFile fileMultipart,
             Model model) {
+
         Message message = new Message(text, tag, user);
+        if(fileMultipart != null && !StringUtils.isEmpty(fileMultipart.getOriginalFilename())) {
+            if(!Files.exists(Paths.get(uploadPath))) {
+                try {
+                    Files.createDirectory(Paths.get(uploadPath));
+                } catch (IOException e) {
+                    throw new CommonException(e.getMessage(), model);
+                }
+            }
+            String fileId = UUID.randomUUID().toString();
+            String fileName = fileId + "." + fileMultipart.getOriginalFilename();
+            try {
+                fileMultipart.transferTo(Paths.get(uploadPath + "/" + fileName).toFile());
+            } catch (IOException e) {
+                throw new CommonException(e.getMessage(), model);
+            }
+            message.setFilename(fileName);
+        }
+
+
         messageRepo.save(message);
 
         Iterable<Message> messages = messageRepo.findAll();
